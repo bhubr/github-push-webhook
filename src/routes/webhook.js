@@ -11,6 +11,7 @@ router.post('/', async (req, res) => {
   try {
     // GitHub payload
     const { ref, before, after, repository } = req.body
+    console.log(req.body)
     if (!ref || !repository) {
       console.log('#0 not a push payload', req.body)
       return res.sendStatus(422)
