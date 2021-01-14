@@ -43,14 +43,19 @@ router.post('/webhook', async (req, res) => {
 
     // checkout la bonne branche
     if (localBranch !== pushedBranch) {
-      console.log('#5 checkout', pushedBranch)
+      console.log('#5 checkout & re-pull', pushedBranch)
       await gitCheckout(fullName, pushedBranch)
+      const pullAgain = await gitPull(fullName)
+      console.log(pullAgain)
     }
     // return res.sendStatus(204)
     // const {  }
     // vérifie yarn.lock/package-lock.json/pnpm-lock.yaml
     const pkgManager = await getPkgManager(fullName)
     console.log('#6', pkgManager)
+
+    res.json({ project, pushedBranch, localBranch, pkgManager })
+
     // installe les deps avec le bon tool
     const installOut = await pkgInstall(pkgManager, fullName)
     console.log('#7', installOut)
@@ -59,7 +64,6 @@ router.post('/webhook', async (req, res) => {
     console.log('#8', runOut)
 
     console.log('#12 done ', project, localBranch)
-    res.json({ project, branch: localBranch })
   } catch (err) {
     console.error(err)
     return res.status(500).json({

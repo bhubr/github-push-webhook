@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node src/server",
     "start:dev": "nodemon --ignore repos",
+    "lint": "npx eslint --fix src/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
