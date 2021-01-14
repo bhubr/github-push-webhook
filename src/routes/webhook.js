@@ -40,20 +40,20 @@ router.post('/', async (req, res) => {
     console.log(pullOut)
 
     // vérifie la branche courante
-    const localBranch = await gitBranch(fullName)
+    const localBranch = await gitBranch(project.path)
     console.log('#4 local branch', localBranch)
 
     // checkout la bonne branche
     if (localBranch !== pushedBranch) {
       console.log('#5 checkout & re-pull', pushedBranch)
-      await gitCheckout(fullName, pushedBranch)
-      const pullAgain = await gitPull(fullName)
+      await gitCheckout(project.path, pushedBranch)
+      const pullAgain = await gitPull(project.path)
       console.log(pullAgain)
     }
     // return res.sendStatus(204)
     // const {  }
     // vérifie yarn.lock/package-lock.json/pnpm-lock.yaml
-    const pkgManager = await getPkgManager(fullName)
+    const pkgManager = await getPkgManager(project.path)
     console.log('#6', pkgManager)
 
     emitter.emit('push', JSON.stringify({ name: project.name, pushedBranch, localBranch, pkgManager }))
@@ -61,12 +61,12 @@ router.post('/', async (req, res) => {
 
     // installe les deps avec le bon tool
     const onInstallData = (data) => emitter.emit('install', JSON.stringify({ name: project.name, stdout: data }))
-    const installOut = await pkgInstall(pkgManager, fullName, onInstallData, onInstallData)
+    const installOut = await pkgInstall(pkgManager, project.path, onInstallData, onInstallData)
 
     console.log('#7', installOut)
     // run build
     const onBuildData = (data) => emitter.emit('build', JSON.stringify({ name: project.name, stdout: data }))
-    const runOut = await runCommand(project.command, fullName, onBuildData, onBuildData)
+    const runOut = await runCommand(project.command, project.path, onBuildData, onBuildData)
     console.log('#8', runOut)
 
     console.log('#9 done ', project, localBranch)

@@ -1,11 +1,11 @@
-const { join } = require('path')
+// const { join } = require('path')
 const { spawn } = require('child_process')
-const { reposRoot } = require('../config')
+// const { reposRoot } = require('../config')
 
-const runCommand = async (command, repoName, onStdout, onStderr) => new Promise(
+const runCommand = async (command, repoPath, onStdout, onStderr) => new Promise(
   (resolve, reject) => {
     const [cmd, ...args] = command.split(' ')
-    const opts = { cwd: join(reposRoot, repoName), shell: true }
+    const opts = { cwd: repoPath, shell: true }
     const child = spawn(cmd, args, opts)
 
     child.stdout.on('data', data => onStdout(data.toString()))

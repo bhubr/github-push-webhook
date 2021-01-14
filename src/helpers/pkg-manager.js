@@ -2,7 +2,6 @@ const { join } = require('path')
 const { each } = require('bluebird')
 const runCommand = require('./run-command')
 const { existsAsync } = require('./fs-async')
-const { reposRoot } = require('../config')
 
 const lockFiles = {
   npm: 'package-lock.json',
@@ -10,12 +9,12 @@ const lockFiles = {
   pnpm: 'pnpm-lock.yaml'
 }
 
-const getPkgManager = async (repoName) => {
+const getPkgManager = async (repoPath) => {
   const managers = Object.keys(lockFiles)
   let manager
   await each(managers, async key => {
     const lockFile = lockFiles[key]
-    const fullPath = join(reposRoot, repoName, lockFile)
+    const fullPath = join(repoPath, lockFile)
     const exists = await existsAsync(fullPath)
     if (exists) {
       manager = key
@@ -27,7 +26,7 @@ const getPkgManager = async (repoName) => {
   return manager || 'npm'
 }
 
-const pkgInstall = async (pkgManager, repoName, onStdout, onStderr) => runCommand(`${pkgManager} install`, repoName, onStdout, onStderr)
+const pkgInstall = async (pkgManager, repoPath, onStdout, onStderr) => runCommand(`${pkgManager} install`, repoPath, onStdout, onStderr)
 
 module.exports = {
   getPkgManager,
