@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
 
     // pull
     console.log('#3 pull')
-    const pullOut = await gitPull(fullName)
+    const pullOut = await gitPull(project.path)
     console.log(pullOut)
 
     // vérifie la branche courante
