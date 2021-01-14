@@ -3,24 +3,27 @@ const socket = io()
 
 const getData = (msg) => {
   const { name, ...rest } = JSON.parse(msg)
+  console.log(name, rest)
   const sanitizedName = name.replace('/', '--')
   return { name, sanitizedName, ...rest }
 }
 
 socket.on('push', (msg) => {
   const { name, sanitizedName, pushedBranch, ...rest } = getData(msg)
+  activatePane(sanitizedName)
   const log = document.querySelector(`#pane-${sanitizedName} code`)
+  log.innerHTML = ''
   log.innerHTML += `Received push: ${pushedBranch}\n`
 })
 socket.on('install', (msg) => {
   const { sanitizedName, stdout } = getData(msg)
   const log = document.querySelector(`#pane-${sanitizedName} code`)
-  log.innerHTML += `\nInstalling deps:\n${stdout}\n`
+  log.innerHTML += stdout
 })
 socket.on('build', (msg) => {
   const { sanitizedName, stdout } = getData(msg)
   const log = document.querySelector(`#pane-${sanitizedName} code`)
-  log.innerHTML += `\nBuilding:\n${stdout}\n`
+  log.innerHTML += stdout
 })
 
 // eslint-disable-next-line no-undef
@@ -74,6 +77,7 @@ const buildUi = (projects) => {
       <h2>${p.name}</h2>
       <pre><code></code></pre>
     `
+    pane.style.display = 'none'
     return pane
   })
 

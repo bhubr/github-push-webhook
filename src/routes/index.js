@@ -62,15 +62,16 @@ router.post('/webhook', async (req, res) => {
     res.json({ project, pushedBranch, localBranch, pkgManager })
 
     // installe les deps avec le bon tool
-    const installOut = await pkgInstall(pkgManager, fullName)
-    emitter.emit('install', JSON.stringify({ name: project.name, stdout: installOut }))
+    const onInstallData = (data) => emitter.emit('install', JSON.stringify({ name: project.name, stdout: data }))
+    const installOut = await pkgInstall(pkgManager, fullName, onInstallData, onInstallData)
+
     console.log('#7', installOut)
     // run build
-    const runOut = await runCommand(project.command, fullName)
+    const onBuildData = (data) => emitter.emit('build', JSON.stringify({ name: project.name, stdout: data }))
+    const runOut = await runCommand(project.command, fullName, onBuildData, onBuildData)
     console.log('#8', runOut)
-    emitter.emit('build', JSON.stringify({ name: project.name, stdout: runOut }))
 
-    console.log('#12 done ', project, localBranch)
+    console.log('#9 done ', project, localBranch)
   } catch (err) {
     console.error(err)
     return res.status(500).json({

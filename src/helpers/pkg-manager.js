@@ -1,6 +1,6 @@
 const { join } = require('path')
 const { each } = require('bluebird')
-const execAsync = require('./exec-async')
+const runCommand = require('./run-command')
 const { existsAsync } = require('./fs-async')
 const { reposRoot } = require('../config')
 
@@ -30,9 +30,7 @@ const getPkgManager = async (repoName) => {
   return manager
 }
 
-const pkgInstall = async (pkgManager, repoName) => execAsync(`${pkgManager} install`, {
-  cwd: join(reposRoot, repoName)
-})
+const pkgInstall = async (pkgManager, repoName, onStdout, onStderr) => runCommand(`${pkgManager} install`, repoName, onStdout, onStderr)
 
 module.exports = {
   getPkgManager,
