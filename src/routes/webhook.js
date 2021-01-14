@@ -5,12 +5,9 @@ const { getPkgManager, pkgInstall } = require('../helpers/pkg-manager')
 const runCommand = require('../helpers/run-command')
 const emitter = require('../event-emitter')
 
-const projects = require('./projects')
-
 const router = express.Router()
-router.use('/projects', projects)
 
-router.post('/webhook', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     // GitHub payload
     const { ref, before, after, repository } = req.body

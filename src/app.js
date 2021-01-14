@@ -1,5 +1,5 @@
 const express = require('express')
-const api = require('./routes')
+const api = require('./routes/api')
 const { publicDir } = require('./config')
 const app = express()
 
