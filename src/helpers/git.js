@@ -1,6 +1,21 @@
 const { join } = require('path')
 const { reposRoot } = require('../config')
 const execAsync = require('./exec-async')
+const { existsAsync, mkdirAsync } = require('./fs-async')
+
+const gitClone = async (url) => {
+  const urlRe = /https:\/\/github\.com\/(.*)\/(.*)/
+  const matches = url.match(urlRe)
+  if (!matches) throw new Error(`Not a repo: ${url}`)
+  const [, username, repo] = matches
+  const userRoot = join(reposRoot, username)
+  if (!existsAsync(userRoot)) {
+    await mkdirAsync(userRoot)
+  }
+  const outcome = await execAsync(`git clone ${url}`, { cwd: userRoot })
+  console.log(outcome)
+  return [username, repo]
+}
 
 const gitBranch = async (repoName) => {
   const out = await execAsync('git branch', {
@@ -20,5 +35,5 @@ const gitCheckout = async (repoName, branchName) => execAsync(`git checkout ${br
 })
 
 module.exports = {
-  gitBranch, gitPull, gitCheckout
+  gitClone, gitBranch, gitPull, gitCheckout
 }

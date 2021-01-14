@@ -1,14 +1,8 @@
-const fs = require('fs')
 const { join } = require('path')
-const { promisify, each } = require('bluebird')
+const { each } = require('bluebird')
 const execAsync = require('./exec-async')
+const { existsAsync } = require('./fs-async')
 const { reposRoot } = require('../config')
-
-const statAsync = promisify(fs.stat)
-const existsAsync = (file) => statAsync(file)
-  .then(() => true)
-  .catch(() => false)
-  .then(res => console.log('file exists', file, res) || res)
 
 const lockFiles = {
   npm: 'package-lock.json',
