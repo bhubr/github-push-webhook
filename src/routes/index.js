@@ -1,10 +1,14 @@
 const express = require('express')
-const findProjectByRepoName = require('../helpers/find-project-by-repo-name')
+const Project = require('../models/project')
 const { gitBranch, gitPull, gitCheckout } = require('../helpers/git')
 const { getPkgManager, pkgInstall } = require('../helpers/pkg-manager')
 const runCommand = require('../helpers/run-command')
+const emitter = require('../event-emitter')
+
+const projects = require('./projects')
 
 const router = express.Router()
+router.use('/projects', projects)
 
 router.post('/webhook', async (req, res) => {
   try {
@@ -17,7 +21,7 @@ router.post('/webhook', async (req, res) => {
     const { full_name: fullName } = repository
     console.log('#1 recv', ref, before, after, fullName)
     // trouver projet à partir du repo name
-    const project = await findProjectByRepoName(fullName)
+    const project = await Project.findByRepoName(fullName)
     if (!project) {
       return res.status(404).json({
         error: 'Project not found'
@@ -54,14 +58,17 @@ router.post('/webhook', async (req, res) => {
     const pkgManager = await getPkgManager(fullName)
     console.log('#6', pkgManager)
 
+    emitter.emit('push', JSON.stringify({ name: project.name, pushedBranch, localBranch, pkgManager }))
     res.json({ project, pushedBranch, localBranch, pkgManager })
 
     // installe les deps avec le bon tool
     const installOut = await pkgInstall(pkgManager, fullName)
+    emitter.emit('install', JSON.stringify({ name: project.name, stdout: installOut }))
     console.log('#7', installOut)
     // run build
     const runOut = await runCommand(project.command, fullName)
     console.log('#8', runOut)
+    emitter.emit('build', JSON.stringify({ name: project.name, stdout: runOut }))
 
     console.log('#12 done ', project, localBranch)
   } catch (err) {

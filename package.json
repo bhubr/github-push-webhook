@@ -4,7 +4,7 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server",
-    "start:dev": "nodemon --ignore repos",
+    "start:dev": "nodemon --ignore repos --ignore public",
     "lint": "npx eslint --fix src/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -14,6 +14,7 @@
   "dependencies": {
     "bluebird": "^3.7.2",
     "express": "^4.17.1",
+    "socket.io": "^3.1.0",
     "sqlite3": "^5.0.1",
     "uuid": "^8.3.2"
   },
