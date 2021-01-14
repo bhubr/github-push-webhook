@@ -15,7 +15,7 @@ const createProject = async (url, parentDir, force = 0) => {
   }
   const name = `${owner}/${repo}`
   const path = resolve(parentDir, repo)
-  await Project.create({ name, path })
+  await Project.create({ url, name, path })
   console.log('done')
 }
 
