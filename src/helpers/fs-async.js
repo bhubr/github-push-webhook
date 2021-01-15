@@ -7,7 +7,7 @@ const mkdirAsync = promisify(fs.mkdir)
 const existsAsync = (file) => statAsync(file)
   .then(() => true)
   .catch(() => false)
-  .then(res => console.log('file exists', file, res) || res)
+  .then(res => res)
 
 module.exports = {
   existsAsync, mkdirAsync

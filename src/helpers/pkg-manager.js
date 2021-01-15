@@ -12,22 +12,19 @@ const lockFiles = {
 
 const getPkgManager = async (repoName) => {
   const managers = Object.keys(lockFiles)
-  const manager = await each(managers, async key => {
-    console.log('check', key)
+  let manager
+  await each(managers, async key => {
     const lockFile = lockFiles[key]
     const fullPath = join(reposRoot, repoName, lockFile)
     const exists = await existsAsync(fullPath)
     if (exists) {
-      const error = new Error('found')
-      error.manager = key
-      throw error
+      manager = key
+      throw new Error('found')
     }
   }).catch(err => {
-    if (!err.manager) throw err
-    return err.manager
+    if (err.message !== 'found') throw err
   })
-  console.log('found', manager)
-  return manager
+  return manager || 'npm'
 }
 
 const pkgInstall = async (pkgManager, repoName, onStdout, onStderr) => runCommand(`${pkgManager} install`, repoName, onStdout, onStderr)

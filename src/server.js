@@ -6,9 +6,9 @@ const emitter = require('./event-emitter')
 
 io.on('connection', (socket) => {
   console.log('a user connected')
-  const pushListener = (data) => socket.emit('push', data)
-  const installListener = (data) => socket.emit('install', data)
-  const buildListener = (data) => socket.emit('build', data)
+  const pushListener = (data) => console.log('recv push') || socket.emit('push', data)
+  const installListener = (data) => console.log('recv build') || socket.emit('install', data)
+  const buildListener = (data) => console.log('recv install') || socket.emit('build', data)
   emitter.on('push', pushListener)
   emitter.on('install', installListener)
   emitter.on('build', buildListener)

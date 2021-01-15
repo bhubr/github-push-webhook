@@ -5,7 +5,8 @@ const { reposRoot } = require('../config')
 const runCommand = async (command, repoName, onStdout, onStderr) => new Promise(
   (resolve, reject) => {
     const [cmd, ...args] = command.split(' ')
-    const child = spawn(cmd, args, { cwd: join(reposRoot, repoName) })
+    const opts = { cwd: join(reposRoot, repoName), shell: true }
+    const child = spawn(cmd, args, opts)
 
     child.stdout.on('data', data => onStdout(data.toString()))
     child.stderr.on('data', data => onStderr(data.toString()))

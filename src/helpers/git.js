@@ -9,11 +9,11 @@ const gitClone = async (url) => {
   if (!matches) throw new Error(`Not a repo: ${url}`)
   const [, username, repo] = matches
   const userRoot = join(reposRoot, username)
-  if (!existsAsync(userRoot)) {
+  if (!await existsAsync(userRoot)) {
     await mkdirAsync(userRoot)
   }
   const outcome = await execAsync(`git clone ${url}`, { cwd: userRoot })
-  console.log(outcome)
+  console.log('git clone outcome', outcome, username, repo)
   return [username, repo]
 }
 
