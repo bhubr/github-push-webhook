@@ -1,0 +1,16 @@
+{
+  "dev": {
+    "driver": "sqlite3",
+    "filename": "./data.db"
+  },
+
+  "prod": {
+    "driver": "sqlite3",
+    "filename": "./data.prod.db"
+  },
+
+  "test": {
+    "driver": "sqlite3",
+    "filename": "./data.test.db"
+  }
+}
